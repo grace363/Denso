@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome | Watch & Earn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.4em;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 2em;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn {
+            padding: 14px;
+            font-size: 1em;
+            background-color: #00c6ff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #008fc1;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        @media (min-width: 500px) {
+            .btn-container {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Watch & Earn 🎥💰</h1>
+    <p>Choose how you’d like to continue</p>
+
+    <div class="btn-container">
+        <a href="{{ url_for('dashboard') }}" class="btn">User Dashboard</a>
+        <a href="{{ url_for('youtuber_dashboard') }}" class="btn">YouTuber Dashboard</a>
+    </div>
+</body>
+</html>
