@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome | Watch & Earn</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.5em;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 2em;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            background-color: #00c6ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #008fc1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Watch & Earn 🎥💰</h1>
+    <p>Click below to continue to your dashboard</p>
+    <a href="{{ url_for('dashboard') }}" class="btn">Go to Dashboard</a>
+</body>
+</html>
