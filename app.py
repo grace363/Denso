@@ -104,6 +104,23 @@ def youtuber_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
+# Initialize database
+def init_db():
+    """Initialize database tables and default data."""
+    db.create_all()
+    create_default_settings()
+    
+    # Create admin user if doesn't exist
+    if not User.query.filter_by(username='admin').first():
+        admin = User(
+            username='admin',
+            email='admin@example.com',
+            password_hash=generate_password_hash('admin123'),
+            is_admin=True
+        )
+        db.session.add(admin)
+        db.session.commit()
+
 # Routes
 @app.route('/')
 def index():
@@ -391,20 +408,9 @@ def update_settings():
     flash('Settings updated successfully!', 'success')
     return redirect(url_for('admin_panel'))
 
+# Initialize database when app starts
+with app.app_context():
+    init_db()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        create_default_settings()
-        
-        # Create admin user if doesn't exist
-        if not User.query.filter_by(username='admin').first():
-            admin = User(
-                username='admin',
-                email='admin@example.com',
-                password_hash=generate_password_hash('admin123'),
-                is_admin=True
-            )
-            db.session.add(admin)
-            db.session.commit()
-    
     app.run(debug=True)
