@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch & Earn - User Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .balance-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .balance-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .balance-amount {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+
+        .coin-animation {
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .daily-bonus-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .bonus-timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4caf50;
+            margin: 10px 0;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .videos-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .video-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .video-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .watch-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        .watch-btn.watched {
+            background: #2ecc71;
+            cursor: default;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2ecc71);
+            transition: width 0.3s ease;
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .flash-success {
+            background: #4caf50;
+        }
+
+        .flash-error {
+            background: #f44336;
+        }
+
+        .online-timer {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .earning-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(76, 175, 80, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            z-index: 1001;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4caf50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 150px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .no-videos {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .balance-section {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .videos-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>Welcome, <span id="username">Loading...</span>!</h1>
+                <div class="online-timer">
+                    Online: <span id="online-time">00:00</span>
+                </div>
+            </div>
+            <div class="balance-section">
+                <div class="balance-display">
+                    <div class="coin-animation">💰</div>
+                    <div class="balance-amount" id="balance-amount">0.00</div>
+                    <div>Coins</div>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="flash-messages" id="flash-messages"></div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-value" id="videos-watched">0</div>
+                <div class="stat-label">Videos Watched</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-earned">0.00</div>
+                <div class="stat-label">Total Earned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="daily-streak">0</div>
+                <div class="stat-label">Daily Streak</div>
+            </div>
+        </div>
+
+        <div class="daily-bonus-section">
+            <h2>Daily Bonus</h2>
+            <p>Stay online for <span id="bonus-required-time">60</span> seconds to earn your daily bonus!</p>
+            <div class="bonus-timer" id="bonus-timer">60</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="bonus-progress"></div>
+            </div>
+            <button class="btn" id="claim-bonus-btn" disabled>Claim Daily Bonus (Loading...)</button>
+        </div>
+
+        <div class="loading" id="loading-message">Loading videos...</div>
+        <div class="videos-section" id="videos-section" style="display: none;">
+            <!-- Videos will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="video-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeVideoModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="video-container"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="watch-progress"></div>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                Watch time: <span id="watch-time">0</span>s / <span id="required-time">0</span>s
+            </div>
+            <div style="text-align: center; margin-top: 10px; color: #666;">
+                Keep watching to earn your reward!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let onlineTime = 0;
+        let bonusTime = 0;
+        let currentVideoId = null;
+        let watchTime = 0;
+        let requiredWatchTime = 30;
+        let watchInterval = null;
+        let bonusInterval = null;
+        let dailyBonusSeconds = 60;
+        let dailyBonusAmount = 1.0;
+        let bonusClaimed = false;
+        let currentBalance = 0;
+        let watchedVideoIds = [];
+        let videosData = [];
+        let dailyBonusAvailable = true;
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            try {
+                await loadUserData();
+                await loadVideos();
+                await loadSettings();
+                startOnlineTimer();
+                startBonusTimer();
+                startPeriodicBalanceUpdate();
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showError('Failed to load dashboard data. Please refresh the page.');
+            }
+        }
+
+        // Load user data from backend
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/get_balance');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentBalance = data.balance;
+                    updateBalance(currentBalance);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load videos from backend
+        async function loadVideos() {
+            try {
+                const response = await fetch('/api/get_videos');
+                if (response.ok) {
+                    const data = await response.json();
+                    videosData = data.videos || [];
+                    watchedVideoIds = data.watched_video_ids || [];
+                    renderVideos();
+                    updateStats();
+                } else {
+                    // Fallback: render sample videos if API not available
+                    renderSampleVideos();
+                }
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                renderSampleVideos();
+            }
+        }
+
+        // Load settings from backend
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/get_settings');
+                if (response.ok) {
+                    const data = await response.json();
+                    dailyBonusSeconds = parseInt(data.daily_bonus_seconds) || 60;
+                    dailyBonusAmount = parseFloat(data.daily_bonus_amount) || 1.0;
+                    requiredWatchTime = parseInt(data.video_watch_seconds) || 30;
+                    
+                    document.getElementById('bonus-required-time').textContent = dailyBonusSeconds;
+                    document.getElementById('claim-bonus-btn').textContent = `Claim Daily Bonus (${dailyBonusAmount.toFixed(2)} coins)`;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        // Render videos
+        function renderVideos() {
+            const videosSection = document.getElementById('videos-section');
+            const loadingMessage = document.getElementById('loading-message');
+            
+            loadingMessage.style.display = 'none';
+            videosSection.style.display = 'grid';
+            
+            if (videosData.length === 0) {
+                videosSection.innerHTML = '<div class="no-videos">No videos available at the moment.</div>';
+                return;
+            }
+
+            videosSection.innerHTML = videosData.map(video => {
+                const isWatched = watchedVideoIds.includes(video.id);
+                const buttonClass = isWatched ? 'btn watch-btn watched' : 'btn watch-btn';
+                const buttonText = isWatched ? '✓ Already Watched' : 'Watch Video';
+                const buttonDisabled = isWatched ? 'disabled' : '';
+                const onclickHandler = isWatched ? '' : `onclick="watchVideo(${video.id}, '${video.url}', '${video.title}', ${video.watch_duration})"`;
+                
+                return `
+                    <div class="video-card">
+                        <div class="video-thumbnail">🎬 Video Preview</div>
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-info">
+                            <span>Reward: ${video.reward_amount.toFixed(2)} coins</span>
+                            <span>Duration: ${video.watch_duration}s</span>
+                        </div>
+                        <button class="${buttonClass}" ${buttonDisabled} ${onclickHandler}>
+                            ${buttonText}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render sample videos (fallback)
+        function renderSampleVideos() {
+            const videosSection = document.getElementById('videos-section');
+            const loadingMessage = document.getElementById('loading-message');
+            
+            loadingMessage.style.display = 'none';
+            videosSection.style.display = 'grid';
+            
+            videosSection.innerHTML = `
+                <div class="video-card">
+                    <div class="video-thumbnail">🎬 Video Preview</div>
+                    <div class="video-title">Sample Video 1</div>
+                    <div class="video-info">
+                        <span>Reward: 0.10 coins</span>
+                        <span>Duration: 30s</span>
+                    </div>
+                    <button class="btn watch-btn" onclick="watchVideo(1, 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'Sample Video 1', 30)">
+                        Watch Video
+                    </button>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">🎬 Video Preview</div>
+                    <div class="video-title">Sample Video 2</div>
+                    <div class="video-info">
+                        <span>Reward: 0.15 coins</span>
+                        <span>Duration: 45s</span>
+                    </div>
+                    <button class="btn watch-btn" onclick="watchVideo(2, 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'Sample Video 2', 45)">
+                        Watch Video
+                    </button>
+                </div>
+            `;
+        }
+
+        // Online timer
+        function startOnlineTimer() {
+            setInterval(() => {
+                onlineTime++;
+                const minutes = Math.floor(onlineTime / 60);
+                const seconds = onlineTime % 60;
+                document.getElementById('online-time').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Daily bonus timer
+        function startBonusTimer() {
+            bonusInterval = setInterval(() => {
+                if (bonusClaimed) return;
+                
+                bonusTime++;
+                const remaining = dailyBonusSeconds - bonusTime;
+                document.getElementById('bonus-timer').textContent = Math.max(0, remaining);
+                
+                const progress = (bonusTime / dailyBonusSeconds) * 100;
+                document.getElementById('bonus-progress').style.width = Math.min(100, progress) + '%';
+                
+                if (bonusTime >= dailyBonusSeconds) {
+                    document.getElementById('claim-bonus-btn').disabled = false;
+                    document.getElementById('bonus-timer').textContent = 'Ready!';
+                    document.getElementById('bonus-timer').style.color = '#4caf50';
+                    clearInterval(bonusInterval);
+                }
+            }, 1000);
+        }
+
+        // Claim daily bonus
+        document.getElementById('claim-bonus-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/daily_bonus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentBalance = data.new_balance;
+                    updateBalance(currentBalance);
+                    showEarningAnimation(`+${data.bonus_amount.toFixed(2)} coins earned!`);
+                    
+                    document.getElementById('claim-bonus-btn').disabled = true;
+                    document.getElementById('claim-bonus-btn').textContent = 'Bonus Claimed!';
+                    document.getElementById('bonus-timer').textContent = 'Claimed!';
+                    bonusClaimed = true;
+                    
+                    showFlashMessage('Daily bonus claimed successfully!', 'success');
+                    updateStats();
+                } else {
+                    showFlashMessage(data.message || 'Failed to claim bonus', 'error');
+                }
+            } catch (error) {
+                console.error('Error claiming bonus:', error);
+                showFlashMessage('Error claiming bonus. Please try again.', 'error');
+            }
+        });
+
+        // Watch video function
+        function watchVideo(videoId, videoUrl, title, duration) {
+            currentVideoId = videoId;
+            watchTime = 0;
+            requiredWatchTime = duration;
+            
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('required-time').textContent = duration;
+            document.getElementById('watch-time').textContent = '0';
+            document.getElementById('watch-progress').style.width = '0%';
+            
+            // Create video element
+            const videoContainer = document.getElementById('video-container');
+            
+            if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                // YouTube video
+                videoContainer.innerHTML = `
+                    <iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>
+                `;
+            } else {
+                // Local video file or other source
+                videoContainer.innerHTML = `
+                    <video width="100%" height="400" controls>
+                        <source src="${videoUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+            }
+            
+            document.getElementById('video-modal').style.display = 'block';
+            
+            // Start watch timer
+            watchInterval = setInterval(() => {
+                watchTime++;
+                document.getElementById('watch-time').textContent = watchTime;
+                
+                const progress = (watchTime / requiredWatchTime) * 100;
+                document.getElementById('watch-progress').style.width = Math.min(100, progress) + '%';
+                
+                // Check if video is fully watched
+                if (watchTime >= requiredWatchTime) {
+                    clearInterval(watchInterval);
+                    completeVideoWatch();
+                }
+            }, 1000);
+        }
+
+        // Complete video watch
+        async function completeVideoWatch() {
+            try {
+                const response = await fetch('/api/watch_video', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        video_id: currentVideoId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentBalance = data.new_balance;
+                    updateBalance(currentBalance);
+                    showEarningAnimation(`+${data.earned_amount.toFixed(2)} coins earned!`);
+                    
+                    // Mark video as watched
+                    watchedVideoIds.push(currentVideoId);
+                    
+                    // Update UI
+                    const videoCards = document.querySelectorAll('.video-card');
+                    videoCards.forEach(card => {
+                        const btn = card.querySelector('.watch-btn');
+                        if (btn && btn.onclick && btn.onclick.toString().includes(`watchVideo(${currentVideoId}`)) {
+                            btn.className = 'btn watch-btn watched';
+                            btn.disabled = true;
+                            btn.textContent = '✓ Already Watched';
+                            btn.onclick = null;
+                        }
+                    });
+                    
+                    closeVideoModal();
+                    showFlashMessage('Video watched successfully! Reward added to your balance.', 'success');
+                    updateStats();
+                } else {
+                    showFlashMessage(data.message || 'Failed to process video reward', 'error');
+                    closeVideoModal();
+                }
+            } catch (error) {
+                console.error('Error completing video watch:', error);
+                showFlashMessage('Error processing video reward. Please try again.', 'error');
+                closeVideoModal();
+            }
+        }
+
+        // Close video modal
+        function closeVideoModal() {
+            document.getElementById('video-modal').style.display = 'none';
+            if (watchInterval) {
+                clearInterval(watchInterval);
+                watchInterval = null;
+            }
+            currentVideoId = null;
+            watchTime = 0;
+        }
+
+        // Update balance display
+        function updateBalance(newBalance) {
+            document.getElementById('balance-amount').textContent = newBalance.toFixed(2);
+            
+            // Add bounce animation
+            const balanceElement = document.getElementById('balance-amount');
+            balanceElement.style.animation = 'bounce 0.5s ease-in-out';
+            setTimeout(() => {
+                balanceElement.style.animation = '';
+            }, 500);
+        }
+
+        // Show earning animation
+        function showEarningAnimation(message) {
+            const animation = document.createElement('div');
+            animation.className = 'earning-animation';
+            animation.textContent = message;
+            document.body.appendChild(animation);
+            
+            setTimeout(() => {
+                animation.remove();
+            }, 3000);
+        }
+
+        // Show flash message
+        function showFlashMessage(message, type) {
+            const flashContainer = document.getElementById('flash-messages');
+            const flashMessage = document.createElement('div');
+            flashMessage.className = `flash-message flash-${type}`;
+            flashMessage.textContent = message;
+            flashContainer.appendChild(flashMessage);
+            
+            setTimeout(() => {
+                flashMessage.remove();
+            }, 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.querySelector('.container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 10000);
+        }
+
+        // Update stats
+        function updateStats() {
+            const watchedVideos = watchedVideoIds.length;
+            document.getElementById('videos-watched').textContent = watchedVideos;
+            document.getElementById('total-earned').textContent = currentBalance.toFixed(2);
+            
+            // Simple daily streak calculation (would be better to get from backend)
+            const streak = Math.floor(currentBalance / dailyBonusAmount);
+            document.getElementById('daily-streak').textContent = streak;
+        }
+
+        // Start periodic balance update
+        function startPeriodicBalanceUpdate() {
+            setInterval(async () => {
+                try {
+                    const response = await fetch('/api/get_balance');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.balance !== currentBalance) {
+                            currentBalance = data.balance;
+                            updateBalance(currentBalance);
+                            updateStats();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching balance:', error);
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('video-modal');
+            if (event.target === modal) {
+                closeVideoModal();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+
+        // Prevent page refresh during video watching
+        window.addEventListener('beforeunload', function(event) {
+            if (watchInterval) {
+                event.preventDefault();
+                event.returnValue = 'You are currently watching a video. Are you sure you want to leave?';
+            }
+        });
+    </script>
+</body>
+</html>
