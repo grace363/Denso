@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Watch & Earn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #111, #222);
+            color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #1a1a1a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            color: #00ffcc;
+        }
+        nav {
+            background-color: #222;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+        }
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background-color: #333;
+            border-radius: 6px;
+        }
+        nav a:hover {
+            background-color: #00ffcc;
+            color: #000;
+        }
+        section {
+            padding: 2rem;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 10px rgba(0,255,200,0.1);
+        }
+        h2 {
+            color: #00ffcc;
+        }
+        button, input[type="submit"] {
+            background-color: #00ffcc;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        input, select, textarea {
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+        }
+        .refreshing {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,255,200,0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(0,255,200,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
+        }
+    </style>
+</head>
+<body>
 
+<header>
+    <h1>Admin Control Panel</h1>
+    <button onclick="location.href='/logout'">Logout</button>
+</header>
+
+<nav>
+    <a href="#users">Users</a>
+    <a href="#videos">Videos</a>
+    <a href="#ads">Advertisements</a>
+    <a href="#settings">Settings</a>
+    <a href="#kyc">KYC</a>
+    <a href="#transactions">Finance</a>
+    <a href="#system">System</a>
+</nav>
+
+<main>
+    <section id="users" class="card">
+        <h2>All Users</h2>
+        <div id="userList">Loading...</div>
+    </section>
+
+    <section id="videos" class="card">
+        <h2>Video Management</h2>
+        <form action="/admin/upload_video" method="POST" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="Video Title" required>
+            <input type="file" name="video_file" required>
+            <textarea name="description" placeholder="Description"></textarea>
+            <input type="submit" value="Upload Video">
+        </form>
+        <form action="/admin/upload_youtube" method="POST">
+            <input type="text" name="youtube_url" placeholder="YouTube URL" required>
+            <input type="submit" value="Add YouTube Video">
+        </form>
+        <div id="videoList">Fetching videos...</div>
+    </section>
+
+    <section id="ads" class="card">
+        <h2>Sponsored Ads</h2>
+        <form action="/admin/upload_ad" method="POST" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="Ad Title">
+            <input type="file" name="ad_file" required>
+            <input type="text" name="click_url" placeholder="Click URL (optional)">
+            <select name="ad_type">
+                <option value="video">Video</option>
+                <option value="image">Image</option>
+                <option value="clickable">Clickable</option>
+            </select>
+            <input type="submit" value="Upload Ad">
+        </form>
+    </section>
+
+    <section id="settings" class="card">
+        <h2>Environment Config</h2>
+        <form action="/admin/update_config" method="POST">
+            <input type="text" name="key" placeholder="Config Key" required>
+            <input type="text" name="value" placeholder="New Value" required>
+            <input type="submit" value="Update Config">
+        </form>
+    </section>
+
+    <section id="kyc" class="card">
+        <h2>KYC Verification</h2>
+        <div id="kycList">Pending verifications...</div>
+    </section>
+
+    <section id="transactions" class="card">
+        <h2>Financial Control</h2>
+        <div>
+            <form action="/admin/approve_withdrawals" method="POST">
+                <input type="submit" value="Approve All Pending Withdrawals">
+            </form>
+        </div>
+        <div id="transactionsList">Loading transactions...</div>
+    </section>
+
+    <section id="system" class="card">
+        <h2>System Settings</h2>
+        <form action="/admin/reset_system" method="POST">
+            <input type="submit" value="Reset Entire System">
+        </form>
+        <form action="/admin/rename_app" method="POST">
+            <input type="text" name="new_name" placeholder="New App Name">
+            <input type="submit" value="Rename App">
+        </form>
+    </section>
+</main>
+
+<script>
+    // Auto refresh sections every 30 seconds
+    setInterval(() => {
+        fetch('/admin/get_users').then(res => res.text()).then(data => document.getElementById('userList').innerHTML = data);
+        fetch('/admin/get_videos').then(res => res.text()).then(data => document.getElementById('videoList').innerHTML = data);
+        fetch('/admin/get_kyc').then(res => res.text()).then(data => document.getElementById('kycList').innerHTML = data);
+        fetch('/admin/get_transactions').then(res => res.text()).then(data => document.getElementById('transactionsList').innerHTML = data);
+    }, 30000);
+</script>
+
+</body>
+</html>
